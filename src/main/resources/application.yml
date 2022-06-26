@@ -1,10 +1,10 @@
 spring:
   application:
     name: SpringSecurityStudyApplication
-  thymeleaf:
-    cache: false
+#  thymeleaf:
+#    cache: false
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/springsecurity?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     type: com.alibaba.druid.pool.DruidDataSource
     username: root

@@ -1,0 +1,20 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>用户登录</title>
+</head>
+<script>
+</script>
+<body>
+<h1>Hello SpringSecurity</h1>
+<h2 th:text="${session.SPRING_SECURITY_LAST_EXCEPTION}"></h2>
+<form method="post" th:action="@{/doLogin}">
+    用户名：<input type="text" name="uname"/><br>
+    密码：<input type="text" name="pwd"/><br>
+    <button type="submit" >登录</button>
+</form>
+</body>
+</html>

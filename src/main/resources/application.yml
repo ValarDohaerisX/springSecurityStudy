@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: SpringSecurityStudyApplication
+  thymeleaf:
+    cache: false
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/springsecurity?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: admin
+logging:
+  level:
+    com.lzx.springsecuritystudy: debug
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false #关闭驼峰式命名转换为下划线
+

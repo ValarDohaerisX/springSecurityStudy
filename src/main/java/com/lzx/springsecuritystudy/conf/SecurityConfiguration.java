@@ -1,6 +1,7 @@
 package com.lzx.springsecuritystudy.conf;
 
-import com.lzx.springsecuritystudy.filter.LoginFilter;
+import com.google.code.kaptcha.Constants;
+import com.lzx.springsecuritystudy.filter.LoginKaptchaFilter;
 import com.lzx.springsecuritystudy.handler.MyAuthenticationFailureHandler;
 import com.lzx.springsecuritystudy.handler.MyAuthenticationSuccessHandler;
 import com.lzx.springsecuritystudy.handler.MyLogoutSuccessHandler;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -39,15 +41,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
     @Bean
-    public LoginFilter loginFilter() throws Exception {
-        final LoginFilter loginFilter = new LoginFilter();
-        loginFilter.setFilterProcessesUrl("/doLogin");
-        loginFilter.setUsernameParameter("uname");
-        loginFilter.setPasswordParameter("pwd");
-        loginFilter.setAuthenticationManager(authenticationManagerBean());
-        loginFilter.setAuthenticationSuccessHandler(new MyAuthenticationSuccessHandler());
-        loginFilter.setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
-        return loginFilter;
+    public LoginKaptchaFilter loginFilter() throws Exception {
+        final LoginKaptchaFilter filter = new LoginKaptchaFilter();
+        filter.setFilterProcessesUrl("/doLogin");
+        filter.setUsernameParameter("uname");
+        filter.setPasswordParameter("pwd");
+        filter.setKaptchaParameter(Constants.KAPTCHA_SESSION_KEY);
+        //指定默认的认证管理器AuthenticationManager
+        filter.setAuthenticationManager(authenticationManagerBean());
+        //指定认证成功的处理
+        filter.setAuthenticationSuccessHandler(new MyAuthenticationSuccessHandler());
+        //指定认证失败的处理
+        filter.setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
+        return filter;
     }
 
     private MyUserDetailService myUserDetailService;
@@ -74,15 +80,33 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
 //                .mvcMatchers("/login.html")
 //                .permitAll()
-                .mvcMatchers("/index")  //放行index所有请求（放行资源放在任何请求之前！）
+                .mvcMatchers(
+                        "/index",
+                        "/verfyCode/**",
+                        "/swagger-ui.html/**",
+                        "/swagger-ui/**",
+                        "/swagger-resources/**",
+                        "/v2/api-docs",
+                        "/v3/api-docs",
+                        "/v3/api-docs/swagger-config",
+                        "/webjars/**",
+                        "/doc.html",
+                        "/favicon.ico"
+                )  //放行index所有请求（放行资源放在任何请求之前！）
                 .permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint((req, res, ex) -> {
-                    res.setStatus(HttpStatus.UNAUTHORIZED.value());
                     res.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-                    res.getWriter().print("请完成认证后再操作！");
+                    if (ex instanceof InsufficientAuthenticationException){
+                        res.setStatus(HttpStatus.UNAUTHORIZED.value());
+                        log.error("用户访问未认证请求地址：{}",req.getRequestURL().toString());
+                        res.getWriter().print("请完成认证后再操作！");
+                    }else {
+                        res.getWriter().print(ex.getMessage());
+                    }
+
                 })
                 .and()
                 .formLogin()

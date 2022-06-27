@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@MapperScan(basePackages = "com.lzx.springsecuritystudy.dao")
 @SpringBootApplication
+@MapperScan(basePackages = "com.lzx.springsecuritystudy.dao")
 public class SpringSecurityStudyApplication {
     public static void main(String[] args) {
         SpringApplication.run(SpringSecurityStudyApplication.class, args);

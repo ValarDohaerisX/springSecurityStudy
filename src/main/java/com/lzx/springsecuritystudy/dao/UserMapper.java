@@ -19,6 +19,4 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("select c.* from user a left join user_role b on a.id = b.uid left join role c on b.rid = c.id where a.id = #{id}")
     public List<Role> getRolesById(@RequestParam("id") int id);
-
-    public User loadUserByUsername(String username);
 }

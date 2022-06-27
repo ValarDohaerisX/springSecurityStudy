@@ -26,7 +26,7 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
         Map<String,Object> result = new HashMap<>();
         result.put("code",500);
         result.put("msg","登录失败");
-        result.put("data",exception);
+        result.put("reason",exception.getMessage());
         response.setContentType("application/json;charset=utf-8");
         log.info("result:{}", JSON.toJSONString(result,true));
         response.getWriter().println(JSON.toJSONString(result,true));
